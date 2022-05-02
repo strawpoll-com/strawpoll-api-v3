@@ -1,0 +1,1110 @@
+openapi: 3.1.0
+info:
+  title: StrawPoll API
+  description: 'This is the official StrawPoll API. If you have any questions or suggestions, feel free to contact support@strawpoll.com.'
+  contact:
+    email: support@strawpoll.com
+    name: StrawPoll Support
+    url: 'https://strawpoll.com/contact/'
+    x-twitter: strawpoll_com
+  version: 3.0.0
+  termsOfService: 'https://strawpoll.com/terms/'
+  license:
+    name: CC BY SA 4.0
+    url: 'https://creativecommons.org/licenses/by-sa/4.0/'
+  x-logo:
+    url: 'https://strawpoll.com/images/strawpoll/strawpoll.png'
+  x-providerName: StrawPoll
+externalDocs:
+  description: StrawPoll Help Center
+  url: 'https://strawpoll.com/help/'
+servers:
+  - url: 'https://api.strawpoll.com/v3'
+    description: API endpoint
+tags:
+  - name: Polls
+    description: Poll related endpoints
+  - name: Current user
+    description: Current user related endpoints
+  - name: Users
+    description: User related endpoints
+  - name: Comments
+    description: Comment related endpoints
+  - name: Media
+    description: Media related endpoints
+paths:
+  /users/@me:
+    get:
+      operationId: GetCurrentUser
+      description: Get the current user.
+      tags:
+        - Current user
+      responses:
+        '200':
+          description: Returns the User object for the current user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    patch:
+      operationId: UpdateCurrentUser
+      description: Applies a partial update to the current user.
+      tags:
+        - Current user
+      requestBody:
+        description: Submit a  partial  User object to update the corresponding fields (see examples below).
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - type: object
+                  properties:
+                    displayname:
+                      type: string
+                      example: John Doe
+                - type: object
+                  properties:
+                    user_meta:
+                      type: object
+                      properties:
+                        about:
+                          type: string
+                          example: A brief description for your public profile.
+      responses:
+        '200':
+          description: Returns the updated User object for the current user on success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/@me/polls:
+    get:
+      operationId: ListCurrentUserPolls
+      description: Returns a list of polls related to the current user as well as pagination information.
+      tags:
+        - Current user
+      parameters:
+        - name: type
+          in: query
+          description: created or participated
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list of Poll objects related to the current user as well as pagination information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Poll'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+  /users/@me/activities:
+    get:
+      operationId: ListCurrentUserActivities
+      description: Returns a list of activities for the current user as well as pagination information.
+      tags:
+        - Current user
+      responses:
+        '200':
+          description: Returns a list of UserActivity objects related to the current user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserActivity'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+  '/users/{user_id}':
+    get:
+      operationId: GetUser
+      description: Get the PublicUser object for a given user id.
+      tags:
+        - Users
+      parameters:
+        - name: user_id
+          in: path
+          description: The user id of a user.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the User object for the given user id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  '/users/{user_id}/polls':
+    get:
+      operationId: GetUserPolls
+      description: Returns a list of polls related to the given user id as well as pagination information.
+      tags:
+        - Users
+      parameters:
+        - name: user_id
+          in: path
+          description: user id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: created or participated
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list of Poll objects related to the given user id as well as pagination information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Poll'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+  /upload:
+    post:
+      operationId: uploadFile
+      tags:
+        - Media
+      description: Create a media object by uploading a file.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Upload'
+      responses:
+        '201':
+          description: Returns the uploaded media object on success.
+  /media:
+    post:
+      operationId: createMedia
+      tags:
+        - Media
+      description: Create a media object by submitting an external file.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Media'
+        required: true
+      responses:
+        '201':
+          description: Returns the submitted media object on success.
+  '/media/{media_id}':
+    get:
+      operationId: getMedia
+      description: Get the Media object for a given media id.
+      tags:
+        - Media
+      parameters:
+        - name: media_id
+          in: path
+          description: media id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the media object for a given ID.
+    put:
+      operationId: updateMedia
+      description: Update a media file by passing a Media object.
+      tags:
+        - Media
+      parameters:
+        - name: media_id
+          in: path
+          description: media id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Media'
+        required: true
+      responses:
+        '200':
+          description: Returns the updated media object on success.
+    delete:
+      operationId: deleteMedia
+      description: Deletes a specific media file.
+      tags:
+        - Media
+      parameters:
+        - name: media_id
+          in: path
+          description: media id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Returns an empty response on success.
+  /polls:
+    post:
+      operationId: createPoll
+      tags:
+        - Polls
+      description: Create a poll by passing a poll object.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Poll'
+        required: true
+      responses:
+        '201':
+          description: Returns the created Poll object on success.
+        '400':
+          description: Bad input parameters
+        '500':
+          description: Server error
+      security:
+        - ApiKeyAuth:
+            - user
+  '/polls/{poll_id}':
+    get:
+      operationId: getPoll
+      tags:
+        - Polls
+      description: Get a Poll object for a given poll id.
+      parameters:
+        - name: poll_id
+          in: path
+          description: poll id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poll'
+    put:
+      operationId: updatePoll
+      tags:
+        - Polls
+      description: Update a poll by passing a Poll object.
+      parameters:
+        - name: poll_id
+          in: path
+          description: poll id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Poll'
+        required: true
+      responses:
+        '200':
+          description: Returns the updated Poll object on success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poll'
+    delete:
+      operationId: deletePoll
+      description: Delete a poll for a given poll id.
+      tags:
+        - Polls
+      parameters:
+        - name: poll_id
+          in: path
+          description: poll id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Returns an empty response on success.
+  '/polls/{poll_id}/results':
+    get:
+      operationId: getPollResults
+      description: Get the poll results for a given poll id.
+      tags:
+        - Polls
+      parameters:
+        - name: poll_id
+          in: path
+          description: poll id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollResults'
+    delete:
+      operationId: deletePollResults
+      description: Reset a poll by deleting the results for a given poll id. The deadline also gets reset.
+      tags:
+        - Polls
+      parameters:
+        - name: poll_id
+          in: path
+          description: poll id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Returns an empty response on success.
+  '/polls/{poll_id}/comments':
+    get:
+      operationId: getPollComments
+      description: Returns a list of comments related to the given poll id.
+      tags:
+        - Polls
+      parameters:
+        - name: poll_id
+          in: path
+          description: poll id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Comment'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+  /comments:
+    post:
+      operationId: createComment
+      description: Create a comment by passing a Comment object.
+      tags:
+        - Comments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      responses:
+        '201':
+          description: Returns the created comment object on success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+  '/comments/{comment_id}':
+    get:
+      operationId: getComment
+      description: Get the comment object for a given comment id.
+      tags:
+        - Comments
+      parameters:
+        - name: comment_id
+          in: path
+          description: The ID of a comment
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the comment object for a given ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+    put:
+      operationId: updateComment
+      description: Update a comment by passing a Comment object.
+      tags:
+        - Comments
+      parameters:
+        - name: comment_id
+          in: path
+          description: The ID of a comment
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      responses:
+        '200':
+          description: Returns the updated comment object on success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+    delete:
+      operationId: deleteComment
+      description: Delete a comment for a given comment in.
+      tags:
+        - Comments
+      parameters:
+        - name: comment_id
+          in: path
+          description: The ID of a comment
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Successfully deleted comment
+components:
+  schemas:
+    Poll:
+      required:
+        - poll_options
+        - title
+        - type
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: NPgxkzPqrn2
+        title:
+          type: string
+          example: What type of content do you want to see more of in the future?
+        user:
+          $ref: '#/components/schemas/PublicUser'
+        media:
+          $ref: '#/components/schemas/Media'
+        poll_options:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/TextPollOption'
+              - $ref: '#/components/schemas/ImagePollOption'
+              - $ref: '#/components/schemas/DatePollOption'
+              - $ref: '#/components/schemas/TimeRangePollOption'
+        poll_config:
+          $ref: '#/components/schemas/PollConfig'
+        poll_meta:
+          $ref: '#/components/schemas/PollMeta'
+        type:
+          type: string
+          enum:
+            - multiple_choice
+            - meeting
+            - ranked_choice
+        version:
+          type: string
+          format: uuid
+        created_at:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1649671274
+        updated_at:
+          type: integer
+          format: int64
+          nullable: true
+          readOnly: true
+          example: 1649671274
+        reset_at:
+          type: integer
+          format: int64
+          nullable: true
+          readOnly: true
+          example: 1649671274
+    PollOption:
+      description: This is just the base model for various other poll option types.
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          description: 'possible poll option types, each type has unique properties'
+          enum:
+            - text
+            - image
+            - date
+            - time_range
+        position:
+          type: integer
+          description: 'the sorting of the poll option in the list, starting at 0'
+        vote_count:
+          type: integer
+          description: current vote count for this option
+          readOnly: true
+        max_votes:
+          type: integer
+          description: a limit of maximum allowed votes for this option
+          example: 0
+        description:
+          type: string
+          description: a secondary field for more information on the poll option
+          nullable: true
+        is_write_in:
+          type: boolean
+          description: whether the option was added by a participant or not
+          example: false
+    TextPollOption:
+      description: A text-based poll option (default). The information is stored in the "value" field.
+      allOf:
+        - $ref: '#/components/schemas/PollOption'
+        - type: object
+          properties:
+            id:
+              example: B2ZBXVaAEnJ
+            type:
+              example: text
+            position:
+              example: 0
+            value:
+              example: Reactions
+      x-internal: false
+      examples:
+        - id: B2ZBXVaAEnJ
+          type: text
+          position: 0
+          vote_count: 0
+          max_votes: 0
+          description: string
+          is_write_in: false
+          value: Reactions
+    ImagePollOption:
+      description: 'An image-based poll option. The image information is stored in the "media" field, while a caption is stored in the "value" field. Currently not in use in the live version.'
+      allOf:
+        - $ref: '#/components/schemas/PollOption'
+        - type: object
+          properties:
+            id:
+              example: 61gDLOkK9gw
+            type:
+              example: image
+            position:
+              example: 1
+            media:
+              $ref: '#/components/schemas/Media'
+            value:
+              example: Image Caption
+    DatePollOption:
+      summary: A date-based poll option used for "All-day" meeting options. The information is stored in the "date" field.
+      allOf:
+        - $ref: '#/components/schemas/PollOption'
+        - type: object
+          properties:
+            id:
+              example: 05ZdvdbKDn6
+            type:
+              example: date
+            position:
+              example: 2
+            date:
+              type: string
+              format: date
+    TimeRangePollOption:
+      description: A time-range based poll option used for meeting polls. The information is stored in the "start_time" and "end_time" fields.
+      allOf:
+        - $ref: '#/components/schemas/PollOption'
+        - type: object
+          properties:
+            id:
+              example: jVyGJaBNzZ7
+            type:
+              example: time_range
+            position:
+              example: 3
+            start_time:
+              type: integer
+              format: int64
+              example: 1649671274
+            end_time:
+              type: integer
+              format: int64
+              example: 1649671274
+    PollConfig:
+      type: object
+      properties:
+        vote_type:
+          type: string
+          enum:
+            - default
+            - box_small
+            - participant_grid
+          description: Changes the layouts of how a voting is displayed.
+        allow_comments:
+          type: boolean
+          example: true
+        allow_indeterminate:
+          type: boolean
+          description: Only relevant in polls with participant grids. It adds the option to reply with "If need be".
+          example: false
+        allow_other_option:
+          type: boolean
+          description: Allows users to add custom options to your poll.
+          example: false
+        custom_design_colors:
+          type: string
+          description: Various RGB values for custom design colors of a poll page (stored as JSON). To apply it, use_custom_design must be set true.
+          nullable: true
+          example: '{}'
+        deadline_at:
+          type: integer
+          format: int64
+          example: 1649671274
+          nullable: true
+          description: Unixtime value of when a poll is closed.
+        duplication_checking:
+          type: string
+          enum:
+            - ip
+            - session
+            - invite
+            - none
+          description: Changes the way duplicate votes are handled.
+        edit_vote_permissions:
+          type: string
+          enum:
+            - admin
+            - admin_voter
+            - voter
+            - nobody
+          description: Sets the permissions of who is allowed to edit votes. Only relevent when voters are required to enter their name. 
+        force_appearance:
+          type: string
+          nullable: true
+          enum:
+            - auto
+            - dark
+            - light
+          description: By default, it is auto-detected whether a user wants to see a dark mode or not. This process can be forces to match the custom colors of a poll.
+        hide_participants:
+          type: boolean
+          example: false
+          description: Hiding participants is an option to remove the names of other participants from public view. Own votes are still visible to a participant.
+        is_multiple_choice:
+          type: boolean
+          example: true
+          description: By default, polls are set to allow only one answer. After activating this, you can choose also set multiple_choice_min and multiple_choice_max to define the allowed range of multiple choices.
+        multiple_choice_min:
+          type: integer
+          example: 1
+          description: The minimum number of options a voter has to choose. A value of 0 means unlimited.
+        multiple_choice_max:
+          type: integer
+          example: 2
+          description: The maximum number of options a voter has to choose. A value of 0 means unlimited.
+        number_of_winners:
+          type: integer
+          example: 1
+          description: After a poll is closed, winners can be declared. This indicates how many options should be marked as "winner". Currently not implemented in live version.
+        randomize_options:
+          type: boolean
+          example: false
+          description: For ranked choice votings, it might be useful to randomize the poll options list to remove a voting bias.
+        require_voter_names:
+          type: boolean
+          example: false
+          description: Participants will be required to enter their names. Often used in smaller groups when every personal opinion is relevant.
+        results_visibility:
+          type: string
+          enum:
+            - always
+            - after_deadline
+            - after_vote
+            - never
+          description: Changes the conditions of when participants are allowed to see the results.
+        use_custom_design:
+          type: boolean
+          example: false
+          description: Activates the use of custom design colors for a poll.
+    PollMeta:
+      type: object
+      properties:
+        description:
+          type: string
+          description: A text field for the description of a poll.
+        location:
+          type: string
+          description: A text field for the location of a poll or an related event.
+        vote_count:
+          type: integer
+          example: 969
+        participant_count:
+          type: integer
+          example: 420
+        view_count:
+          type: integer
+          example: 1337
+        comment_count:
+          type: integer
+          example: 42
+        creator_country:
+          type: string
+          example: de
+        pin_code_expired_at:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1649671274
+          nullable: true
+        last_vote_at:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1649671274
+          nullable: true
+        timezone:
+          type: string
+          example: Europe/Berlin
+          nullable: true
+    PollResults:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: NPgxkzPqrn2
+        version:
+          type: string
+          format: uuid
+        voteCount:
+          type: integer
+          example: 1337
+        participantCount:
+          type: integer
+          example: 969
+        resultsKey:
+          type: string
+          format: uuid
+          description: The results key is used to fetch live data via Websocket.
+        poll_options:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/TextPollOption'
+              - $ref: '#/components/schemas/ImagePollOption'
+              - $ref: '#/components/schemas/DatePollOption'
+              - $ref: '#/components/schemas/TimeRangePollOption'
+        poll_participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/PollParticipant'
+    PollParticipant:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: NPgxkzPqrn2
+        name:
+          type: string
+          example: John Doe
+        country_code:
+          type: string
+          example: us
+        is_edit_allowed:
+          type: boolean
+          description: 'An indicator whether the current user is allowed to edit this entry. This should be done on client side, but well, here we are :)'
+        poll_votes:
+          type: array
+          items:
+            type: integer
+            nullable: true
+          example:
+            - 0
+            - 1
+            - 0
+            - null
+          description: 'This array indicates the votes corresponding to the array of poll_options. A value of 1 is a "yes" vote, a value of 0 is a "no" vote. In group polls, a value of null could indicate that the option was not present when the participant casted their vote.'
+        created_at:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1649671274
+    Media:
+      type: object
+      properties:
+        id:
+          type: string
+          example: poy9NPNwnJr
+          description: The ID of a Media object. When creating a poll with media, this is the only relevant field that is needed.
+        type:
+          type: string
+          example: image
+          enum:
+            - image
+            - video
+            - youtube
+            - giphy
+        user:
+          $ref: '#/components/schemas/PublicUser'
+        source:
+          type: string
+          example: 'https://www.example.com/source.html'
+        url:
+          type: string
+          example: 'https://cdn.strawpoll.com/media/poll-images/poy9NPNwnJr-c.png'
+        width:
+          type: integer
+          example: 640
+        height:
+          type: integer
+          example: 480
+        created_at:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1649671274
+        updated_at:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1649671274
+    PublicUser:
+      required:
+        - avatar_path
+        - displayname
+      type: object
+      properties:
+        id:
+          type: string
+          example: poy9NPNwnJr
+        username:
+          type: string
+          example: john-doe
+        displayname:
+          type: string
+          example: John Doe
+        avatar_path:
+          type: string
+          example: /images/avatars/john-doe-QrgewxGKypY.png
+        user_meta:
+          $ref: '#/components/schemas/UserMeta'
+        created_at:
+          type: integer
+          format: int64
+          example: 1649671274
+      readOnly: true
+    User:
+      allOf:
+        - $ref: '#/components/schemas/PublicUser'
+        - type: object
+          properties:
+            user_config:
+              $ref: '#/components/schemas/UserConfig'
+    UserMeta:
+      type: object
+      properties:
+        about:
+          type: string
+          example: A brief description for your public profile.
+        website:
+          type: string
+          example: 'https://www.example.com/'
+        country_code:
+          type: string
+          example: us
+        monthly_points:
+          type: integer
+          example: 42069
+        total_points:
+          type: integer
+          example: 69420
+    UserConfig:
+      type: object
+      properties:
+        appearance:
+          type: string
+        clock_type:
+          type: string
+        first_day_of_week:
+          type: integer
+          description: 'A value of 0 means Sunday, a value of 1 means Monday, etc.'
+        language:
+          type: string
+          example: en
+        locale:
+          type: string
+          example: en-gb
+        notification_delay:
+          type: integer
+          example: 30
+          description: The time in minutes our system waits between sending two email notifications.
+        notify_deadline:
+          type: boolean
+          description: Receive an update e-mail notification when a poll is closed. This should be renamed in future versions.
+        notify_meeting_vote:
+          type: boolean
+          description: Receive an update e-mail notification when a participant votes by name. This should be renamed in future versions.
+        notify_poll_vote:
+          type: boolean
+          description: Receive an update e-mail notification when a participant votes anonymously. This should be renamed in future versions.
+        timezone:
+          type: string
+          example: Europe/Berlin
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: poy9NPNwnJr
+        reply_to_id:
+          type: string
+          description: The ID of the parent comment.
+          nullable: true
+          example: jVyGYLLzg7E
+        reference_id:
+          type: string
+          description: The ID of the referenced comment in the same hierarchy.
+          nullable: true
+        poll_id:
+          type: string
+          description: The ID of the related poll object.
+          example: QrgewxGKypY
+        name:
+          type: string
+          description: The name of a guest commenter.
+          nullable: true
+          writeOnly: true
+          example: John Doe
+        user:
+          $ref: '#/components/schemas/PublicUser'
+        text:
+          type: string
+          example: This is a comment.
+        like_count:
+          type: integer
+          readOnly: true
+          example: 0
+        replies:
+          type: array
+          readOnly: true
+          example:
+            - id: jVyGYLLzg7E
+              user:
+                displayname: Guest
+                avatar_path: /images/avatars/guest.png
+              text: This is a guest comment.
+              like_count: 0
+              replies: []
+              created_at: 1649671274
+          items:
+            $ref: '#/components/schemas/Comment'
+        created_at:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1649671274
+        updated_at:
+          type: integer
+          format: int64
+          nullable: true
+          readOnly: true
+          example: 1649671274
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+    UserActivity:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+            - create_poll
+            - vote_poll
+        payload:
+          type: string
+          format: json
+          example:
+            path: /polls/XOgOJjEQon3
+            title: What's the plan for friday night?
+        created_at:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1649671274
+    Upload:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        type:
+          type: string
+          enum:
+            - image
+            - video
+          example: image
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: ''
+security:
+  - ApiKeyAuth: []
