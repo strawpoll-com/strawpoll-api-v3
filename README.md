@@ -1,4 +1,5 @@
-# strawpoll-api-v3
+# StrawPoll API v3
+
 The official StrawPoll API v3.
 
 The OpenAPI document is rendered to HTML via Stoplight at https://strawpoll.com/docs/api/v3.html.
