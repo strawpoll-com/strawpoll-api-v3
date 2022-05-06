@@ -47,7 +47,7 @@ payload = {
 	"type": "multiple_choice",
 }
 
-response = requests.post(endpoint + '/polls', json = payload, headers = { 'API-KEY': api_key })
+response = requests.post(endpoint + '/polls', json = payload, headers = { 'X-API-KEY': api_key })
 
 if response:
 	poll = response.json() # response is Poll object
