@@ -554,6 +554,7 @@ components:
         version:
           type: string
           format: uuid
+          readOnly: true
         created_at:
           type: integer
           format: int64
@@ -598,12 +599,14 @@ components:
           example: 0
         description:
           type: string
+          example: This is a description text
           description: a secondary field for more information on the poll option
           nullable: true
         is_write_in:
           type: boolean
           description: whether the option was added by a participant or not
           example: false
+          readOnly: true
     TextPollOption:
       description: A text-based poll option (default). The information is stored in the "value" field.
       allOf:
@@ -780,25 +783,32 @@ components:
       properties:
         description:
           type: string
+          example: This is a description text.
           description: A text field for the description of a poll.
         location:
           type: string
+          example: This is a location text.
           description: A text field for the location of a poll or an related event.
         vote_count:
           type: integer
           example: 969
+          readOnly: true
         participant_count:
           type: integer
           example: 420
+          readOnly: true
         view_count:
           type: integer
           example: 1337
+          readOnly: true
         comment_count:
           type: integer
           example: 42
+          readOnly: true
         creator_country:
           type: string
           example: de
+          readOnly: true
         pin_code_expired_at:
           type: integer
           format: int64
@@ -825,6 +835,7 @@ components:
         version:
           type: string
           format: uuid
+          readOnly: true
         voteCount:
           type: integer
           example: 1337
