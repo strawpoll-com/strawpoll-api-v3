@@ -24,6 +24,7 @@ payload = {
 		}
 	],
 	"poll_config": {
+		"is_private": True,
 		"vote_type": "participant_grid",
 		"allow_comments": True,
 		"allow_indeterminate": False,
