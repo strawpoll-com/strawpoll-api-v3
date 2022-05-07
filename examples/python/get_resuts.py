@@ -9,18 +9,19 @@ response = requests.get(endpoint + '/polls/' + poll_id + '/results', headers = {
 
 if response:
 	poll_results = response.json() # response is PollResults object
-	print("+--------------------------------------------------------------+--------------+")
+	print("+".ljust(63, "-") + "+".ljust(14, "-") + "+")
 	for option in poll_results["poll_options"]:
-		print("| " + option["value"].ljust(60) + " | " + str(option["vote_count"]).ljust(12) + " |")
-		print("+--------------------------------------------------------------+--------------+")
+		print("| " + option["value"].ljust(60) + " | " + str(option["vote_count"]).ljust(12) + "|")
+		print("+".ljust(63, "-") + "+".ljust(14, "-") + "+")
 	if (len(poll_results["poll_participants"]) > 0):
+		row_space = "+".ljust(33, "-") + "+" + "+".join(["".ljust(14, "-") for option in poll_results["poll_options"]]) + "+"
 		print("Participants:")
-		print("+--------------------------------+--------------+--------------+--------------+")
+		print(row_space)
 		print("| " + "Name".ljust(30) + " | " + " | ".join([option["value"].ljust(12) for option in poll_results["poll_options"]]) + " |")
-		print("+--------------------------------+--------------+--------------+--------------+")
+		print(row_space)
 		for participant in poll_results["poll_participants"]:
 			print("| " + participant["name"].ljust(30) + ' | ' + " | ".join(str(vote).ljust(12) for vote in participant["poll_votes"]) + " |")
-			print("+--------------------------------+--------------+--------------+--------------+")
+			print(row_space)
 	print("Total 'yes' votes: " + str(poll_results["vote_count"]))
 	print("Total participants: " + str(poll_results["participant_count"]))
 else:
