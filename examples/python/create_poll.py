@@ -21,6 +21,7 @@ payload = {
 		}
 	],
 	"poll_config": {
+		"is_private": False,
 		"vote_type": "default",
 		"allow_comments": True,
 		"allow_indeterminate": False,
@@ -28,6 +29,7 @@ payload = {
 		"custom_design_colors": None,
 		"deadline_at": None,
 		"duplication_checking": "ip",
+		"allow_vpn_users": False,
 		"edit_vote_permissions": "nobody",
 		"force_appearance": None,
 		"hide_participants": False,
