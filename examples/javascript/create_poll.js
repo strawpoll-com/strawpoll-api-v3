@@ -21,6 +21,7 @@ let poll = {
 		}
 	],
 	"poll_config": {
+		"is_private": false,
 		"vote_type": "default",
 		"allow_comments": true,
 		"allow_indeterminate": false,
@@ -28,6 +29,7 @@ let poll = {
 		"custom_design_colors": null,
 		"deadline_at": null,
 		"duplication_checking": "ip",
+		"allow_vpn_voters": false,
 		"edit_vote_permissions": "nobody",
 		"force_appearance": null,
 		"hide_participants": false,
