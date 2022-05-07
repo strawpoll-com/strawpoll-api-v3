@@ -9,12 +9,12 @@ response = requests.get(endpoint + '/polls/' + poll_id + '/results', headers = {
 
 if response:
 	poll_results = response.json() # response is PollResults object
-	print("-------------------------------------------------------------------------------")
+	print("+--------------------------------+--------------+--------------+--------------+")
 	print("| " + "Name".ljust(30) + " | " + " | ".join([option["value"].ljust(12) for option in poll_results["poll_options"]]) + " |")
-	print("-------------------------------------------------------------------------------")
+	print("+--------------------------------+--------------+--------------+--------------+")
 	for participant in poll_results["poll_participants"]:
 		print("| " + participant["name"].ljust(30) + ' | ' + " | ".join(str(vote).ljust(12) for vote in participant["poll_votes"]) + " |")
-		print("-------------------------------------------------------------------------------")
+		print("+--------------------------------+--------------+--------------+--------------+")
 	print("Total 'yes' votes: " + str(poll_results["vote_count"]))
 	print("Total participants: " + str(poll_results["participant_count"]))
 else:
