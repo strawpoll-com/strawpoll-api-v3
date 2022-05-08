@@ -1,11 +1,11 @@
 import requests
 
-endpoint = "https://api.strawpoll.com/v3"
-api_key = "YOUR_API_KEY"
+ENDPOINT = "https://api.strawpoll.com/v3"
+API_KEY = "YOUR_API_KEY"
 
 poll_id = "NPgxkzPqrn2"
 
-response = requests.get(endpoint + '/polls/' + poll_id, headers = { 'X-API-KEY': api_key })
+response = requests.get(ENDPOINT + '/polls/' + poll_id, headers = { 'X-API-KEY': API_KEY })
 
 if response:
 	poll = response.json() # response is Poll object
