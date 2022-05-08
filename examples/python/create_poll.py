@@ -1,7 +1,7 @@
 import requests
 
-endpoint = "https://api.strawpoll.com/v3"
-api_key = "YOUR_API_KEY"
+ENDPOINT = "https://api.strawpoll.com/v3"
+API_KEY = "YOUR_API_KEY"
 
 payload = {
 	"title": "Is this a good Python example?",
@@ -49,7 +49,7 @@ payload = {
 	"type": "multiple_choice",
 }
 
-response = requests.post(endpoint + '/polls', json = payload, headers = { 'X-API-KEY': api_key })
+response = requests.post(ENDPOINT + '/polls', json = payload, headers = { 'X-API-KEY': API_KEY })
 
 if response:
 	poll = response.json() # response is Poll object
