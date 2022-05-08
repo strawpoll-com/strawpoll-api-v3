@@ -1,8 +1,8 @@
 import requests
-import datetime
+from datetime import datetime
 
-endpoint = "https://api.strawpoll.com/v3"
-api_key = "YOUR_API_KEY"
+ENDPOINT = "https://api.strawpoll.com/v3"
+API_KEY = "YOUR_API_KEY"
 
 payload = {
 	"title": "When do we meet to discuss this Python example?",
@@ -19,7 +19,7 @@ payload = {
 		},
 		{
 			"type": "time_range",
-			"start_time": datetime.datetime.strptime("2022-08-27T12:00:00+02:00", "%Y-%m-%dT%H:%M:%S%z").timestamp(),	# datetime reads UTC time so it is recommended to use a timezone offset (e.g. +02:00)
+			"start_time": datetime.strptime("2022-08-27T12:00:00+02:00", "%Y-%m-%dT%H:%M:%S%z").timestamp(),	# datetime reads UTC time so it is recommended to use a timezone offset (e.g. +02:00)
 			"end_time": None	# Open end
 		}
 	],
@@ -46,7 +46,7 @@ payload = {
 	"type": "meeting",
 }
 
-response = requests.post(endpoint + '/polls', json = payload, headers = { 'X-API-KEY': api_key })
+response = requests.post(ENDPOINT + '/polls', json = payload, headers = { 'X-API-KEY': API_KEY })
 
 if response:
 	poll = response.json() # response is Poll object
