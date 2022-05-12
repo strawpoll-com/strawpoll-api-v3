@@ -7,7 +7,7 @@ info:
     name: StrawPoll Support
     url: 'https://strawpoll.com/contact/'
     x-twitter: strawpoll_com
-  version: 3.0.0
+  version: 3.1.0
   termsOfService: 'https://strawpoll.com/terms/'
   license:
     name: CC BY SA 4.0
@@ -548,9 +548,11 @@ components:
         type:
           type: string
           enum:
-            - multiple_choice
+            - anonymous_poll
+            - group_poll
             - meeting
             - ranked_choice
+            - secure_voting
         version:
           type: string
           format: uuid
@@ -685,6 +687,10 @@ components:
     PollConfig:
       type: object
       properties:
+        is_private:
+          type: boolean
+          example: true
+          description: Hidden from search, discover and public user profiles.
         vote_type:
           type: string
           enum:
@@ -722,6 +728,10 @@ components:
             - invite
             - none
           description: Changes the way duplicate votes are handled.
+        allow_vpn_users:
+          type: boolean
+          example: false
+          description: Allow VPN users to vote
         edit_vote_permissions:
           type: string
           enum:
@@ -1091,9 +1101,7 @@ components:
         payload:
           type: string
           format: json
-          example:
-            path: /polls/XOgOJjEQon3
-            title: What's the plan for friday night?
+          example: { "path": "/polls/XOgOJjEQon3", "title": "What's the plan for friday night?" }
         created_at:
           type: integer
           format: int64
