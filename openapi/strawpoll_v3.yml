@@ -548,11 +548,9 @@ components:
         type:
           type: string
           enum:
-            - anonymous_poll
-            - group_poll
+            - multiple_choice
             - meeting
             - ranked_choice
-            - secure_voting
         version:
           type: string
           format: uuid
@@ -1127,3 +1125,4 @@ components:
       description: ''
 security:
   - ApiKeyAuth: []
+
