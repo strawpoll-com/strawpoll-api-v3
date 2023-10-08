@@ -550,7 +550,7 @@ components:
           enum:
             - multiple_choice
             - meeting
-            - ranked_choice
+            - ranking
         version:
           type: string
           format: uuid
@@ -780,7 +780,7 @@ components:
             - always
             - after_deadline
             - after_vote
-            - never
+            - hidden
           description: Changes the conditions of when participants are allowed to see the results.
         use_custom_design:
           type: boolean
